@@ -15,3 +15,6 @@ This is a lightweight web-based chatroom built from scratch using vanilla JavaSc
 - **Backend:** PHP (pure, no frameworks)
 - **Database:** MySQL
 - **Communication:** JSON via `fetch()` and polling
+
+![Login](screenshots/login.png)
+![Login](screenshots/anwendung.png)
