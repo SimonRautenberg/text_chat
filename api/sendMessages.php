@@ -1,19 +1,22 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 spl_autoload_register(function ($class) {
     include __DIR__ . '/../classes/' . $class . '.php';
 });
 
 $inputRaw = file_get_contents('php://input');
 $input = json_decode($inputRaw, true);
-$lastKnownMessage = $input['lastKnownMessage'] ?? 0;
+$segments = explode('/', $path);
+$lastSegment = end($segments);
 
-echo json_encode(return_range_of_messages($lastKnownMessage, Messages::select_max_ID()));
+echo json_encode(return_range_of_messages($lastSegment, Messages::select_max_ID()));
 
-function return_range_of_messages($lastKnownMessage, $maxID){
+function return_range_of_messages($lastSegment, $maxID){
     if($_SESSION["userID"] > 0){
-        $firstWantedMessage = $lastKnownMessage + 1;
+        $firstWantedMessage = $lastSegment + 1;
         $range_of_messages = [];
         for($i = $firstWantedMessage; $i <= $maxID; $i++){
             $message = new Messages($i);

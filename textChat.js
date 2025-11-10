@@ -8,18 +8,18 @@ setInterval(() => {
 }, 2000);
 
 function addToMessages(id){
-  fetch('/text_chat/api/sendMessages.php', {
-    method: 'POST',
+  const url = `/text_chat/api/messages/${encodeURIComponent(id)}`; // oder ?lastKnownMessage=${encodeURIComponent(id)}
+  fetch(url, {
+    method: 'GET',
     headers: {
-      'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({lastKnownMessage: id})
+      'Accept': 'application/json'
+    }
   })
   .then(response => {
     if (!response.ok) {
       throw new Error(`HTTP-Fehler: ${response.status}`);
     }
-  return response.json();
+    return response.json();
   })
   .then(data => {
     if (Array.isArray(data)) {
@@ -32,7 +32,7 @@ function addToMessages(id){
   .catch(error => {
     console.error('Fehler beim Abrufen der Nachrichten:', error);
   });
-  };
+};
 
 function renderMessages(newMessages) {
   const textbox = document.getElementById('textBox');
@@ -57,7 +57,7 @@ sendButton.addEventListener('click', function () {
     const messageBox = document.getElementById('messageBox');
     const message = messageBox.value;
     document.getElementById("messageBox").value = "";
-    fetch('/text_chat/api/getMessage.php', {
+    fetch('/text_chat/api/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -4,32 +4,45 @@ spl_autoload_register(function ($class) {
     include 'classes/' . $class . '.php';
 });
 
+$path = $_SERVER['REQUEST_URI'];
+$method = $_SERVER['REQUEST_METHOD'];
+$segments = explode('/', $path);
 
-$page = $_GET['page'] ?? 'login';
-$action = $_GET['action'] ?? 'none';
-if (!isset($_SESSION['userID'])){
-  $_SESSION['userID'] = 0;
-}
-
-  if ($action === 'logout') {
-        $_SESSION = array();
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
+if ($segments[2]== 'api'){
+    if ($method == 'GET'){
+        include 'api/sendMessages.php';
     }
-    session_destroy();
-    header("Location: index.php?page=login");
-  }
-if ($_SESSION['userID'] > 0) {
-    include 'views/secret.php';
+    if ($method == 'POST'){
+        include 'api/getMessage.php';
+    }
+}else{
 
-} else {
-if ($page === 'register') {
-    include 'views/register.php';
-} else {
-    include 'views/login.php';
-}
+    $page = $_GET['page'] ?? 'login';
+    $action = $_GET['action'] ?? 'none';
+    if (!isset($_SESSION['userID'])){
+    $_SESSION['userID'] = 0;
+    }
+
+    if ($action === 'logout') {
+        $_SESSION = array();
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        session_destroy();
+        header("Location: index.php?page=login");
+    }
+    if ($_SESSION['userID'] > 0) {
+        include 'views/secret.php';
+
+    } else {
+        if ($page === 'register') {
+        include 'views/register.php';
+        } else {
+            include 'views/login.php';
+        }
+    }
 }
